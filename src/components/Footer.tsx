@@ -1,8 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope } from "react-icons/fa";
+import { useState, useEffect } from "react";
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState("");
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear().toString());
+  }, []);
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -76,6 +83,7 @@ const Footer = () => {
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>&copy; {currentYear} Nitish. All rights reserved.</p>
+          <p className="mt-2 text-sm">Developed and Design by Nitish</p>
         </div>
       </div>
     </footer>

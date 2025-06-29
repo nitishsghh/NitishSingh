@@ -1,98 +1,63 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React from "react";
+import { useForm, ValidationError } from "@formspree/react";
 
 const ContactForm: React.FC = () => {
-  const [name, setName] = useState('');
-  const [mobile, setMobile] = useState('');
-  const [remarks, setRemarks] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    setError('');
-    setSubmitted(false);
-
-    if (!name.trim() || !mobile.trim() || !remarks.trim()) {
-      setError('All fields are required.');
-      return;
-    }
-
-    // Basic mobile number validation (e.g., 10 digits)
-    if (!/^\d{10}$/.test(mobile.trim())) {
-      setError('Please enter a valid 10-digit mobile number.');
-      return;
-    }
-
-    const message = `Name: ${name}\nMobile: ${mobile}\nRemarks: ${remarks}`;
-    const telegramUser = 'Itsnitishsingh';
-    // Note: Telegram's ?text= parameter has limitations on length and special characters.
-    // For more robust solutions, a backend and a Telegram bot API would be needed.
-    const telegramUrl = `https://t.me/${telegramUser}?text=${encodeURIComponent(message)}`;
-
-    // Open in new tab
-    window.open(telegramUrl, '_blank');
-    
-    setSubmitted(true);
-    // Optionally clear the form
-    // setName('');
-    // setMobile('');
-    // setRemarks('');
-
-    // You might want to show a success message or redirect the user
-    // For now, we just set a submitted flag.
-  };
-
+  const [state, handleSubmit] = useForm("xqabwwpn");
+  if (state.succeeded) {
+    return (
+      <section className="py-8 px-4 mx-auto max-w-screen-md text-white">
+        <p className="text-green-400 text-center text-lg font-semibold">Thanks for contacting us!</p>
+      </section>
+    );
+  }
   return (
     <section className="py-8 px-4 mx-auto max-w-screen-md text-white">
-      <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-center text-white">Fill Your Deatils .</h2>
+      <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-center text-white">Fill Your Details</h2>
       <form onSubmit={handleSubmit} className="space-y-8">
         <div>
           <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-300">Your Name</label>
           <input
-            type="text"
             id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            type="text"
+            name="name"
             className="shadow-sm bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 placeholder-gray-400 transition-all duration-300 ease-in-out hover:border-blue-500 focus:scale-105"
-            placeholder="Enter Your Name Here"
+            placeholder="Enter your name"
             required
           />
+          <ValidationError prefix="Name" field="name" errors={state.errors} />
         </div>
         <div>
-          <label htmlFor="mobile" className="block mb-2 text-sm font-medium text-gray-300">Mobile Number</label>
+          <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-300">Email Address</label>
           <input
-            type="tel"
-            id="mobile"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
+            id="email"
+            type="email"
+            name="email"
             className="shadow-sm bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 placeholder-gray-400 transition-all duration-300 ease-in-out hover:border-blue-500 focus:scale-105"
-            placeholder="Mobile No."
-            pattern="\d{10}"
-            title="Please enter a 10-digit mobile number"
+            placeholder="Enter your email"
             required
           />
+          <ValidationError prefix="Email" field="email" errors={state.errors} />
         </div>
         <div>
-          <label htmlFor="remarks" className="block mb-2 text-sm font-medium text-gray-300">Remarks</label>
+          <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-300">Message</label>
           <textarea
-            id="remarks"
+            id="message"
+            name="message"
             rows={6}
-            value={remarks}
-            onChange={(e) => setRemarks(e.target.value)}
             className="block p-2.5 w-full text-sm text-white bg-gray-700 rounded-lg shadow-sm border border-gray-600 focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 transition-all duration-300 ease-in-out hover:border-blue-500 focus:scale-105"
-            placeholder="Leave your remarks here..."
+            placeholder="Leave your message here..."
             required
-          ></textarea>
+          />
+          <ValidationError prefix="Message" field="message" errors={state.errors} />
         </div>
-        {error && <p className="text-sm text-red-400">{error}</p>}
-        {submitted && <p className="text-sm text-green-400">Form submitted! Check Telegram to send your message.</p>}
         <button
           type="submit"
-          className="py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 transition-all duration-300 ease-in-out hover:scale-105 active:scale-95"
+          disabled={state.submitting}
+          className="py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 transition-all duration-300 ease-in-out hover:scale-105 active:scale-95 disabled:opacity-60"
         >
-          Send message via Telegram
+          {state.submitting ? "Submitting..." : "Submit"}
         </button>
       </form>
     </section>
